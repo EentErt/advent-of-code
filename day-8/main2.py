@@ -17,7 +17,7 @@ def main():
 
     dist_map = {}
 
-    shortest_distance = float("inf")
+    longest_distance = float("-inf")
     next_pair = None
 
     # initialize
@@ -36,17 +36,20 @@ def main():
     connecting = True
     while connecting:
         # connect closest pair
-        shortest_distance = float("inf")
+        longest_distance = float("-inf")
         for key in dist_map:
             dest = None      
             if len(dist_map[key]) > 0:
-                dest, *_ = dist_map[key].items()
+                *_, dest = dist_map[key].items()
             else: 
                 continue
-            if dest[1] < shortest_distance:
-                shortest_distance = dest[1]
+            if dest[1] > longest_distance:
+                longest_distance = dest[1]
                 next_pair = [key, dest[0]]
         connections += 1
+
+        print(next_pair[0][0] * next_pair[1][0])
+        sys.exit(0)
 
         dist_map[next_pair[0]].pop(next_pair[1])
         dist_map[next_pair[1]].pop(next_pair[0])
@@ -63,8 +66,8 @@ def main():
 
         if next_pair[0] in unconnected:
             unconnected.remove(next_pair[0])
-        if next_pair[1] in unconnected:
-            unconnected.remove(next_pair[1])
+        if next_pair[0] in unconnected:
+            unconnected.remove(next_pair[0])
 
         circuits.append(connect_circuits)
 
