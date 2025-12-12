@@ -32,7 +32,7 @@ def main():
                 distances[boxes[j]] = dist
         dist_map[boxes[i]] = dict(sorted(distances.items(), key = lambda x: x[1]))
 
-    # make first 1000 connections
+    # make connections
     connecting = True
     while connecting:
         # connect closest pair
@@ -56,22 +56,40 @@ def main():
         # make circuit
         connect_circuits = set()
         connect_circuits.update(next_pair)
+        circuits_to_remove = []
         for circuit in circuits:
             if next_pair[0] in circuit or next_pair[1] in circuit:
-                connect_circuits.update(circuit)
-                circuits.remove(circuit)
+                connect_circuits.update(list(circuit))
+                circuits_to_remove.append(circuit)
+        for circuit in circuits_to_remove:
+            circuits.remove(circuit)
+        
 
         if next_pair[0] in unconnected:
             unconnected.remove(next_pair[0])
         if next_pair[1] in unconnected:
             unconnected.remove(next_pair[1])
 
+
         circuits.append(connect_circuits)
 
-        print(connections, shortest_distance)
-
         if len(circuits) == 1 and len(unconnected) == 0:
-            connecting = False
+            break
+
+        print(len(circuits), len(unconnected), connections, shortest_distance)
+        circuit_lengths = []
+        circuit_total = 0
+        
+        for circuit in circuits:
+            circuit_lengths.append(len(circuit))
+            circuit_total += len(circuit)
+        print(circuit_total, circuit_lengths)
+        if circuit_total > 1000:
+            print(circuits)
+            print(unconnected)
+            sys.exit(0)
+
+
 
 
     longest_three = sorted(circuits, key = lambda x: len(x), reverse = True)[0:3]
@@ -82,7 +100,8 @@ def main():
         result *= len(circuit)
 
     result = next_pair[0][0] * next_pair[1][0]
-                
+
+    print(next_pair)         
     print(result)
 
 
@@ -91,7 +110,13 @@ def main():
 
 
 
-
+def has_overlap(a, b):
+    list_a = list(a)
+    list_b = list(b)
+    for ckt_a in list_a:
+        for ckt_b in list_b:
+            if ckt_a == ckt_b:
+                return True
 
 def get_distance(box1, box2):
     return math.sqrt(math.pow(box1[0] - box2[0], 2) + math.pow(box1[1] - box2[1], 2) + math.pow(box1[2] - box2[2], 2))
