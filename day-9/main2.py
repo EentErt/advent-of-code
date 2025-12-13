@@ -30,9 +30,26 @@ def main():
     # scale
     x_widths = set()
     for i in range(len(points)):
-        if i != len(points) - 1:
-            if points[i] - points[i+1] != 0:
+        for j in range(len(points)):
+            if points[i] - points[j] != 0:
                 x_widths.add(abs(points[i] - points[i+1]))
+
+    x_widths = list(x_widths)
+
+    # find least common denominator
+    scale = 1
+    # if all entries are divisible by i, divide by i for i from 2 to 5
+    for i in range(2, 6):
+        scaling = True
+        while scaling:
+            if all(width % i == 0 for width in x_widths):
+                x_widths = list(map(lambda x: x/i, x_widths))
+                scale *= i
+                continue
+            scaling = False
+    
+    scaled_points = list(map(lambda x: x / scale, biased_points))
+
 
 
     # create "image"
